@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<title>IQ Quiz</title>
+<style>
+body{
+  font-family: Arial;
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+.card{
+  max-width:600px;
+  margin:auto;
+  background:#222;
+  padding:20px;
+  border-radius:15px;
+}
+
+button{
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.choice{
+  display:block;
+  width:100%;
+  margin:10px 0;
+  font-size:18px;
+}
+
+.green{background:#00c853;color:white;}
+.red{background:#d50000;color:white;}
+.blue{background:#2962ff;color:white;}
+
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+<h2>IQ Test</h2>
+
+<div id="start">
+  <h3>Насаа сонго</h3>
+  <button onclick="setAge('0-10')">0-10</button>
+  <button onclick="setAge('11-16')">11-16</button>
+  <button onclick="setAge('18-25')">18-25</button>
+  <button onclick="setAge('30+')">30+</button>
+</div>
+
+<div id="difficulty" class="hidden">
+  <h3>Difficulty</h3>
+  <button onclick="setDiff('Easy')">Easy</button>
+  <button onclick="setDiff('Normal')">Normal</button>
+  <button onclick="setDiff('Hard')">Hard</button>
+</div>
+
+<div id="quiz" class="hidden">
+  <h3 id="question"></h3>
+  <div id="choices"></div>
+</div>
+
+<div id="result" class="hidden">
+  <h2>Result</h2>
+  <p id="scoreText"></p>
+  <button onclick="showAnswers()" class="blue">Хариу харах</button>
+  <div id="answers"></div>
+</div>
+
+</div>
+
+<script>
+
+let age="", diff="";
+let qIndex=0;
+let score=0;
+
+let questions=[
+  {
+    q:"2 + 2 = ?",
+    a:["3","4","5","6"],
+    correct:1
+  },
+  {
+    q:"Capital of Mongolia?",
+    a:["UB","Tokyo","Seoul","Beijing"],
+    correct:0
+  },
+  {
+    q:"Which is logic?",
+    a:["A=B","2+2=5","If A then B","None"],
+    correct:2
+  }
+];
+
+let userAnswers=[];
+
+function setAge(a){
+  age=a;
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("difficulty").classList.remove("hidden");
+}
+
+function setDiff(d){
+  diff=d;
+  document.getElementById("difficulty").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(qIndex>=questions.length){
+    showResult();
+    return;
+  }
+
+  let q=questions[qIndex];
+  document.getElementById("question").innerText=q.q;
+
+  let html="";
+  q.a.forEach((ans,i)=>{
+    html+=`<button class="choice" onclick="answer(${i})">${ans}</button>`;
+  });
+
+  document.getElementById("choices").innerHTML=html;
+}
+
+function answer(i){
+  userAnswers.push(i);
+
+  if(i===questions[qIndex].correct){
+    score+=10;
+  }
+
+  qIndex++;
+  loadQuestion();
+}
+
+function showResult(){
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+
+  let iq=score*5;
+
+  document.getElementById("scoreText").innerText=
+  "Score: "+score+" | Estimated IQ: "+iq;
+}
+
+function showAnswers(){
+  let html="";
+  questions.forEach((q,i)=>{
+    html+=`<p>${q.q} <br> Correct: ${q.a[q.correct]}</p>`;
+  });
+  document.getElementById("answers").innerHTML=html;
+}
+
+</script>
+
+</body>
+</html>
